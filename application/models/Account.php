@@ -27,25 +27,25 @@ class Account extends CI_Model {
    }
    public function login() {
 
-      $email = $this->input->post('email');
+      $phone = $this->input->post('phone');
       $password = $this->input->post('password');
 
       $member = $this->db->select('*')
                          ->from('member')
-                         ->where('email',$email)
+                         ->where('phone',$phone)
                          ->get()->row_array();
       if(password_verify($password, $member['password'])) {
         return true;
       }
       return false;
   }
-  public function getMyInfo($email=null) {
-		if($email==null) {
-				$email = $this->session->userdata('email');
+  public function getMyInfo($phone=null) {
+		if($phone==null) {
+				$phone = $this->session->userdata('phone');
 		}
 		return $this->db->select('*')
 										->from('member')
-										->where('email', $email)
+										->where('phone', $phone)
 										->get()->row_array();
   }
 

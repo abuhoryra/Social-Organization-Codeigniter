@@ -9,18 +9,18 @@ class Login extends CI_Controller {
 
 	public function user_login() {
 
-		$this->form_validation->set_rules('email','Email','required');
+		$this->form_validation->set_rules('phone','Phone','required');
     $this->form_validation->set_rules('password','Password','required');
 
 		if ($this->form_validation->run() == FALSE){
             $this->load->view('login_form');
      }
         else{
-        $email = $this->input->post('email');
+        $phone = $this->input->post('phone');
         $this->load->model('Account');
          if($this->Account->login()){
 
-            $user = $this->Account->getMyInfo($email);
+            $user = $this->Account->getMyInfo($phone);
             $sdata['id']=$user['id'];
             $sdata['email']=$user['email'];
 						$sdata['phone']=$user['phone'];
@@ -28,7 +28,7 @@ class Login extends CI_Controller {
             redirect('Home');
         }
         else{
-            $this->session->set_flashdata('failed', 'Invalid Username Or Password');
+            $this->session->set_flashdata('failed', 'Invalid Phone Or Password');
             redirect('Login/index');
         }
     }
@@ -39,7 +39,9 @@ class Login extends CI_Controller {
 	}
 
 	public function logout() {
+			 $this->session->unset_userdata('phone');
 			 $this->session->unset_userdata('email');
+			 $this->session->unset_userdata('id');
 			 redirect('Login');
 	 }
 

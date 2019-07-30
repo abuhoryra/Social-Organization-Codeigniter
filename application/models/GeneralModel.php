@@ -190,4 +190,33 @@ class GeneralModel extends CI_Model {
      $this->db->delete('expense_history');
    }
 
+   public function get_my_profile() {
+
+     return $this->db->select('id,first_name,last_name,email,phone')
+                     ->from('member')
+                     ->where('id', $this->session->userdata['id'])
+                     ->get()->row_array();
+   }
+
+   public function update_my_profile() {
+
+     $data = array(
+        'first_name' => $this->input->post('first_name'),
+        'last_name' => $this->input->post('last_name'),
+        'email' => $this->input->post('email'),
+        'phone' => $this->input->post('phone')
+     );
+
+     $this->db->set($data);
+     $this->db->where('id', $this->session->userdata['id']);
+     $this->db->update('member');
+   }
+
+   public function delete_admin() {
+
+     $this->db->where('id', $this->member_id);
+     $this->db->delete('member');
+
+   }
+
 }

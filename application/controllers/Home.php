@@ -12,7 +12,7 @@ class Home extends CI_Controller {
   }
 
 	public function index() {
-    if($this->session->userdata('email')) {
+    if($this->session->userdata('phone')) {
 
 			$this->data['admin'] = $this->GeneralModel->get_admin_list();
 			$this->data['super'] = $this->GeneralModel->check_super();
@@ -31,7 +31,7 @@ class Home extends CI_Controller {
     $this->form_validation->set_rules('last_name','Lastname','required');
 		$this->form_validation->set_rules('email','Email','required|is_unique[member.email]');
     $this->form_validation->set_rules('password','Password','required|min_length[6]');
-    $this->form_validation->set_rules('phone','Phone','required|is_unique[member.phone]|max_length[10]');
+    $this->form_validation->set_rules('phone','Phone','required|is_unique[member.phone]|max_length[11]');
 		if ($this->form_validation->run() == FALSE){
 
 			$this->data['admin'] = $this->GeneralModel->get_admin_list();
@@ -73,7 +73,7 @@ class Home extends CI_Controller {
 	}
 
 	public function add_money() {
-    if($this->session->userdata('email') && $this->is_super()) {
+    if($this->session->userdata('phone') && $this->is_super()) {
 
 		$this->data['member'] = $this->GeneralModel->fetch_all_member();
 		$this->data['admin'] = $this->GeneralModel->session_user_data();
@@ -81,7 +81,7 @@ class Home extends CI_Controller {
 		$this->load->view('add_money', $this->data);
 	}
 
-	elseif($this->session->userdata('email') && !$this->is_super()) {
+	elseif($this->session->userdata('phone') && !$this->is_super()) {
        redirect('Home/no_permission');
 	}
 	else{
@@ -109,7 +109,7 @@ class Home extends CI_Controller {
 		}
 		else{
 			$this->GeneralModel->add_deposit();
-			$this->send_sms($phone,$value);
+			//$this->send_sms($phone,$value);
 			redirect('Home/add_money');
 		}
 
@@ -118,7 +118,7 @@ class Home extends CI_Controller {
 
 	public function deposit_history() {
 
-    if($this->session->userdata('email') && $this->is_super()) {
+    if($this->session->userdata('phone') && $this->is_super()) {
 
 			$this->load->library('pagination');
             $config['base_url'] = base_url() . "Home/deposit_history";;
@@ -156,7 +156,7 @@ class Home extends CI_Controller {
 
 	public function edit_deposit($deposit_id){
 
-		if($this->session->userdata('email') && $this->is_super()) {
+		if($this->session->userdata('phone') && $this->is_super()) {
 
 			$this->GeneralModel->deposit_id = $deposit_id;
 			$this->data['deposit'] = $this->GeneralModel->get_update_deposit();
@@ -187,16 +187,21 @@ class Home extends CI_Controller {
 	}
 
 	public function my_deposit() {
+		if($this->session->userdata('phone')) {
 
 		$this->data['my_deposit'] = $this->GeneralModel->get_my_deposit();
 		$this->data['side_bar'] = 'template/sidebar';
 		$this->load->view('my_deposit', $this->data);
+	}
+	else{
+		redirect('Login');
+	}
 
 	}
 
 	public function add_expense() {
 
-		if($this->session->userdata('email') && $this->is_super()) {
+		if($this->session->userdata('phone') && $this->is_super()) {
 
 			$this->data['side_bar'] = 'template/sidebar';
 			$this->load->view('expense_form', $this->data);
@@ -226,16 +231,21 @@ class Home extends CI_Controller {
 	}
 
   public function get_all_expense() {
+		if($this->session->userdata('phone')) {
 
 		$this->data['expense'] = $this->GeneralModel->get_all_expense();
 		$this->data['super'] = $this->GeneralModel->check_super();
 		$this->data['side_bar'] = 'template/sidebar';
 		$this->load->view('expense_list', $this->data);
+	}
+	else{
+		redirect('Login');
+	}
 
 	}
 
 	public function edit_expense($expense_id) {
-    if($this->session->userdata('email') && $this->is_super()) {
+    if($this->session->userdata('phone') && $this->is_super()) {
 
 			 $this->GeneralModel->expense_id = $expense_id;
        $this->data['expense'] = $this->GeneralModel->get_single_expense();
@@ -288,6 +298,59 @@ print_r($e->getMessage());
 	}
 
 
+  public function get_my_profile() {
+    if($this->session->userdata('phone')) {
+
+		$this->data['myprofile'] = $this->GeneralModel->get_my_profile();
+		$this->data['side_bar'] = 'template/sidebar';
+	  $this->load->view('my_profile_edit', $this->data);
+
+	}
+	else{
+		redirect('Login');
+	}
+
+	}
+
+	public function update_my_profile() {
+
+		$post = $this->input->post();
+		$member = $this->GeneralModel->get_my_profile();
+
+		$this->form_validation->set_rules('first_name','First Name','required');
+    $this->form_validation->set_rules('last_name','Lastname','required');
+		$this->form_validation->set_rules('email','Email','required');
+    $this->form_validation->set_rules('phone','Phone','required');
+
+		if($member['email'] != $post['email']){
+			$this->form_validation->set_rules('email','Email','required|is_unique[member.email]');
+		}
+		if($member['phone'] != $post['phone']){
+			$this->form_validation->set_rules('phone','Phone','required|is_unique[member.phone]|max_length[11]');
+		}
+
+		if ($this->form_validation->run() == FALSE){
+
+			$this->data['myprofile'] = $this->GeneralModel->get_my_profile();
+			$this->data['side_bar'] = 'template/sidebar';
+		  $this->load->view('my_profile_edit', $this->data);
+
+		}
+
+		else{
+
+			$this->GeneralModel->update_my_profile();
+			redirect('Home/get_my_profile');
+
+		}
+	}
+
+	public function delete_admin($member_id) {
+
+			 $this->GeneralModel->member_id = $member_id;
+			 $this->GeneralModel->delete_admin();
+			 redirect('Home');
+	}
 
 
 

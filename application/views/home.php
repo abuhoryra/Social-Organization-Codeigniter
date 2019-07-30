@@ -155,23 +155,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       <td>
 
 				<?php
-
+           $user_phone = $this->session->userdata['phone'];
 					 if($super['is_super']==1){
 
 					 if($row['is_super'] == 0) {
 						 ?>
-						 <a class="btn btn-warning btn-sm" href="<?php echo base_url('Home/make_super_admin/'.$row['id'].'/'.'1'); ?>">Make Super</a></td>
+						 <a class="btn btn-warning btn-sm" href="<?php echo base_url('Home/make_super_admin/'.$row['id'].'/'.'1'); ?>">Make Super</a>
 						 <?php
 					 }
-					 else{
+					 if($row['is_super'] == 1 && $user_phone != $row['phone'] ){
+
+
 						 ?>
-						<a class="btn btn-danger btn-sm" href="<?php echo base_url('Home/make_super_admin/'.$row['id'].'/'.'0'); ?>">Remove Super</a></td>
+
+						<a class="btn btn-secondary btn-sm" href="<?php echo base_url('Home/make_super_admin/'.$row['id'].'/'.'0'); ?>">Remove Super</a>
 						<?php
+
 					 }
+
          }
+				 if($user_phone != $row['phone'] && $super['is_super']==1) {
+				 ?>
+				 <a class="btn btn-danger btn-sm" href="<?php echo base_url('Home/delete_admin/'.$row['id']); ?>">Delete Admin</a>
+				 <?php
+				 }
 				?>
 
-
+			</td>
     </tr>
     <?php
   }

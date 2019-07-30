@@ -54,10 +54,10 @@ box-shadow: none;
 	                           ?>
 	                      </h4>
 	                      <div class="form-group">
-	                         <input type="text" class="form-control" id="exampleInputPassword2" placeholder="Email" name="email">
+	                         <input type="text" class="form-control" placeholder="Phone" name="phone">
 	                      </div>
 	                      <?php
-	                        echo form_error('email','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
+	                        echo form_error('phone','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
 	                                        <span aria-hidden="true">&times;</span>
 	                                        </button>',
 	                                        '</div>');

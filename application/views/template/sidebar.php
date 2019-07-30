@@ -53,7 +53,7 @@ body {
   color: white;
 }
 </style>
-</head>
+
 <body>
 
 <div class="sidenav">
@@ -68,7 +68,8 @@ body {
       <a id="sideList_2" href="<?php echo site_url('Home/deposit_history');?>">All Deposit</a>
       <a id="sideList_2" href="<?php echo site_url('Home/my_deposit');?>">My Deposit</a>
   </div>
- <a href="<?php echo site_url('Home/get_all_expense');?>">Expense History</a>
+  <a href="<?php echo site_url('Home/get_all_expense');?>">Expense History</a>
+  <a href="<?php echo site_url('Home/get_my_profile');?>">My Profile</a>
   <a href="<?php echo site_url('Login/logout');?>">Logout</a>
 </div>
 <script>
