@@ -18,7 +18,7 @@ body {
 .sidenav a {
   padding: 6px 8px 6px 16px;
   text-decoration: none;
-  font-size: 25px;
+  font-size: 20px;
   color: #818181;
   display: block;
 }
@@ -37,11 +37,19 @@ body {
   .sidenav a {font-size: 18px;}
 }
 #sideList{
-  font-size: 18px;
+  font-size: 15px;
   margin-left: 15%;
   color: deepskyblue;
 }
 #sideList:hover{
+  color: white;
+}
+#sideList_2{
+  font-size: 15px;
+  margin-left: 15%;
+  color: deepskyblue;
+}
+#sideList_2:hover{
   color: white;
 }
 </style>
@@ -52,15 +60,28 @@ body {
   <a href="#" id="side">Admin</a>
   <div class="list" style="display: none;">
       <a id="sideList" href="<?php echo site_url('Home');?>">Admin List</a>
-      <a id="sideList" href="<?php echo site_url('Home/add_money');?>">Add Money</a>
+      <a id="sideList" href="<?php echo site_url('Home/add_money');?>">Add Deposit</a>
+      <a id="sideList" href="<?php echo site_url('Home/add_expense');?>">Add Expense</a>
   </div>
-  <a href="<?php echo site_url('Home/deposit_history');?>">History</a>
+  <a href="#" id="side_2">Deposit History</a>
+  <div class="list_2" style="display: none;">
+      <a id="sideList_2" href="<?php echo site_url('Home/deposit_history');?>">All Deposit</a>
+      <a id="sideList_2" href="<?php echo site_url('Home/my_deposit');?>">My Deposit</a>
+  </div>
+ <a href="<?php echo site_url('Home/get_all_expense');?>">Expense History</a>
   <a href="<?php echo site_url('Login/logout');?>">Logout</a>
 </div>
 <script>
 $(document).ready(function(){
   $("#side").click(function(){
     $(".list").toggle();
+  });
+});
+</script>
+<script>
+$(document).ready(function(){
+  $("#side_2").click(function(){
+    $(".list_2").toggle();
   });
 });
 </script>

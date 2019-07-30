@@ -23,6 +23,7 @@ class Login extends CI_Controller {
             $user = $this->Account->getMyInfo($email);
             $sdata['id']=$user['id'];
             $sdata['email']=$user['email'];
+						$sdata['phone']=$user['phone'];
             $this->session->set_userdata($sdata);
             redirect('Home');
         }

@@ -92,6 +92,10 @@ class Home extends CI_Controller {
 
 	public function save_deposit() {
 
+		$post = $this->input->post();
+		$phone = $post['phone'];
+		$value = $post['value'];
+
 		$this->form_validation->set_rules('phone','Name','required');
     $this->form_validation->set_rules('value','Money','required');
 		$this->form_validation->set_rules('depositor_phone','Phone','required');
@@ -105,6 +109,7 @@ class Home extends CI_Controller {
 		}
 		else{
 			$this->GeneralModel->add_deposit();
+			$this->send_sms($phone,$value);
 			redirect('Home/add_money');
 		}
 
@@ -179,6 +184,107 @@ class Home extends CI_Controller {
 		$this->GeneralModel->deposit_id = $deposit_id;
 		$this->GeneralModel->delete_deposit();
 		redirect('Home/deposit_history');
+	}
+
+	public function my_deposit() {
+
+		$this->data['my_deposit'] = $this->GeneralModel->get_my_deposit();
+		$this->data['side_bar'] = 'template/sidebar';
+		$this->load->view('my_deposit', $this->data);
+
+	}
+
+	public function add_expense() {
+
+		if($this->session->userdata('email') && $this->is_super()) {
+
+			$this->data['side_bar'] = 'template/sidebar';
+			$this->load->view('expense_form', $this->data);
+
+		}
+		else{
+			$this->data['side_bar'] = 'template/sidebar';
+			$this->load->view('no_permission', $this->data);
+		}
+
+	}
+
+	public function save_expense() {
+
+		$this->form_validation->set_rules('reason','Name','required');
+    $this->form_validation->set_rules('value','Value','required');
+		if ($this->form_validation->run() == FALSE){
+
+			$this->data['side_bar'] = 'template/sidebar';
+			$this->load->view('expense_form', $this->data);
+		}
+		else{
+			$this->GeneralModel->save_expense();
+			redirect('Home/add_expense');
+		}
+
+	}
+
+  public function get_all_expense() {
+
+		$this->data['expense'] = $this->GeneralModel->get_all_expense();
+		$this->data['super'] = $this->GeneralModel->check_super();
+		$this->data['side_bar'] = 'template/sidebar';
+		$this->load->view('expense_list', $this->data);
+
+	}
+
+	public function edit_expense($expense_id) {
+    if($this->session->userdata('email') && $this->is_super()) {
+
+			 $this->GeneralModel->expense_id = $expense_id;
+       $this->data['expense'] = $this->GeneralModel->get_single_expense();
+			 $this->data['side_bar'] = 'template/sidebar';
+	 		$this->load->view('edit_expense', $this->data);
+
+		}
+		else{
+			$this->data['side_bar'] = 'template/sidebar';
+			$this->load->view('no_permission', $this->data);
+		}
+
+	}
+
+	public function update_expense($expense_id) {
+
+		$this->GeneralModel->expense_id = $expense_id;
+		$this->GeneralModel->update_expense();
+		redirect('Home/get_all_expense');
+	}
+
+	public function delete_expense($expense_id) {
+
+		$this->GeneralModel->expense_id = $expense_id;
+		$this->GeneralModel->delete_expense();
+		redirect('Home/get_all_expense');
+	}
+
+	public function send_sms($phone,$value){
+
+		try{
+$soapClient = new SoapClient("https://api2.onnorokomSMS.com/sendSMS.asmx?wsdl");
+$paramArray = array(
+'userName' => "01629710423",
+'userPassword' => "pranto224466",
+'mobileNumber' => "$phone",
+'smsText' => "Your Deposited ammount is $value Tk. Thank You",
+'type' => "TEXT",
+'maskName' => '',
+'campaignName' => '',
+);
+
+$value = $soapClient->__call("OneToOne", array($paramArray));
+print_r($value->OneToOneResult);
+}
+catch (Exception $e) {
+print_r($e->getMessage());
+}
+
 	}
 
 

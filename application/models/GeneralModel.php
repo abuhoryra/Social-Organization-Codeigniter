@@ -4,6 +4,7 @@ class GeneralModel extends CI_Model {
 
   public $member_id;
   public $deposit_id;
+  public $expense_id;
 
    public function get_admin_list() {
 
@@ -121,6 +122,72 @@ class GeneralModel extends CI_Model {
      $this->db->where('id', $this->deposit_id);
      $this->db->delete('account');
 
+   }
+
+   public function get_my_deposit() {
+
+     return $this->db->select('*')
+                     ->from('account')
+                     ->where('depositor_phone', $this->session->userdata['phone'])
+                     ->order_by('time', 'DESC')
+                     ->get()->result_array();
+   }
+
+   public function save_expense() {
+
+     $data = $this->db->select('id,first_name,last_name,phone')
+                      ->from('member')
+                      ->where('email',$this->session->userdata['email'])
+                      ->get()->row_array();
+
+     $full_name = $data['first_name'].' '.$data['last_name'];
+     $phone = $data['phone'];
+
+     $newdata = array(
+       'reason' => $this->input->post('reason'),
+       'value' => $this->input->post('value'),
+       'register_name' => $full_name,
+       'register_phone' => $phone,
+       'time' => time()
+     );
+
+     $this->db->insert('expense_history', $newdata);
+   }
+
+   public function get_all_expense() {
+
+     return $this->db->select('*')
+                     ->from('expense_history')
+                     ->order_by('time', 'DESC')
+                     ->get()->result_array();
+   }
+
+   public function get_single_expense() {
+
+     return $this->db->select('*')
+                     ->from('expense_history')
+                     ->where('id', $this->expense_id)
+                     ->get()->row_array();
+   }
+
+   public function update_expense(){
+
+     $data = array(
+       'reason' => $this->input->post('reason'),
+       'value' => $this->input->post('value'),
+       'time' => time()
+     );
+
+     $this->db->set($data);
+     $this->db->where('id', $this->expense_id);
+     $this->db->update('expense_history');
+
+   }
+
+   public function delete_expense() {
+
+     $this->db->where('id', $this->expense_id);
+     $this->db->delete('expense_history');
    }
 
 }
