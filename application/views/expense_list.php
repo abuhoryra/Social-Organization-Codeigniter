@@ -23,6 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div class="main">
 
     <h3 style="text-align: center; margin-top: 3%">Expense List</h3>
+		<h5 style="text-align: center; color: deepskyblue;">Total Expense: <?php echo $sum_expense.' Tk.'; ?></h5>
     <br>
     <table class="table table-hover">
       <thead>

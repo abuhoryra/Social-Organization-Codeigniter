@@ -234,6 +234,7 @@ class Home extends CI_Controller {
 		if($this->session->userdata('phone')) {
 
 		$this->data['expense'] = $this->GeneralModel->get_all_expense();
+    $this->data['sum_expense'] = $this->GeneralModel->sum_all_expense();
 		$this->data['super'] = $this->GeneralModel->check_super();
 		$this->data['side_bar'] = 'template/sidebar';
 		$this->load->view('expense_list', $this->data);

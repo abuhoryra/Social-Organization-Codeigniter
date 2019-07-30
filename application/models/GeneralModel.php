@@ -219,4 +219,11 @@ class GeneralModel extends CI_Model {
 
    }
 
+   public function sum_all_expense(){
+
+     return $this->db->select_sum('value')
+              ->from('expense_history')
+              ->get()->row()->value;
+   }
+
 }
