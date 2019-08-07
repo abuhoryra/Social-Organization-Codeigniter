@@ -57,11 +57,12 @@ body {
 <body>
 
 <div class="sidenav">
-  <a href="#" id="side">Admin</a>
+  <a href="#" id="side">User</a>
   <div class="list" style="display: none;">
-      <a id="sideList" href="<?php echo site_url('Home');?>">Admin List</a>
+      <a id="sideList" href="<?php echo site_url('Home');?>">User List</a>
       <a id="sideList" href="<?php echo site_url('Home/add_money');?>">Add Deposit</a>
       <a id="sideList" href="<?php echo site_url('Home/add_expense');?>">Add Expense</a>
+      <a id="sideList" href="<?php echo site_url('Home/add_month');?>">Add Month</a>
   </div>
   <a href="#" id="side_2">Deposit History</a>
   <div class="list_2" style="display: none;">

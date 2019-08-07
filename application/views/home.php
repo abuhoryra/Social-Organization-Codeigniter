@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Login</title>
+	<title>Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -26,7 +26,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				?>
 				<div class="ModalBtn" style="text-align: center; margin-top:2%;">
 	        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-	          Add Admin
+	          Add User
 	        </button>
 	      </div>
 				<?php
@@ -40,7 +40,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Admin</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Add User</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -110,7 +110,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   </div>
 </div>
 <br>
-<h5 style="text-align: center;">Admin List</h5>
+<h5 style="text-align: center;">User List</h5>
 <br>
 <table class="table table-hover">
   <thead>
@@ -120,7 +120,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       <th scope="col">Last Name</th>
       <th scope="col">Email</th>
       <th scope="col">Phone</th>
-      <th scope="col">Super Admin</th>
+			<th scope="col">
+			<?php
+
+			if($super['is_super']==1){
+
+				echo 'Super Admin';
+
+			}
+
+			?>
+</th>
 			<?php
 			if($super['is_super']==1){
 				?>
@@ -143,43 +153,70 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       <td><?php echo $row['last_name']; ?></td>
       <td><?php echo $row['email']; ?></td>
       <td><?php echo '0'.$row['phone']; ?></td>
-      <td><?php if($row['is_super'] == 1){
-        echo "Yes";
+      <?php
+
+				if($super['is_super']==1){
+
+			 if($row['is_super'] == 1){
+        ?>
+				<td>Yes</td>
+				<?php
       }
       else{
-        echo "No";
+        ?>
+				<td>No</td>
+				<?php
       }
+		}
     ?>
 
-      </td>
+
       <td>
+				<div class="dropdown">
+					<?php
+					$user_phone = $this->session->userdata['phone'];
+         if($super['is_super']==1){
+					 ?>
+					 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+ 						Action
+ 					</button>
+					 <?php
+				}
+					?>
 
-				<?php
-           $user_phone = $this->session->userdata['phone'];
-					 if($super['is_super']==1){
-
-					 if($row['is_super'] == 0) {
-						 ?>
-						 <a class="btn btn-warning btn-sm" href="<?php echo base_url('Home/make_super_admin/'.$row['id'].'/'.'1'); ?>">Make Super</a>
-						 <?php
-					 }
-					 if($row['is_super'] == 1 && $user_phone != $row['phone'] ){
-
-
-						 ?>
-
-						<a class="btn btn-secondary btn-sm" href="<?php echo base_url('Home/make_super_admin/'.$row['id'].'/'.'0'); ?>">Remove Super</a>
+					<div class="dropdown-menu" style="text-align: center;" aria-labelledby="dropdownMenuButton">
 						<?php
+							 $user_phone = $this->session->userdata['phone'];
+							 if($super['is_super']==1){
 
-					 }
+							 if($row['is_super'] == 0) {
+								 ?>
+								 <a class="btn btn-warning btn-sm" href="<?php echo base_url('Home/make_super_admin/'.$row['id'].'/'.'1'); ?>">Make Super</a><br>
+								 <?php
+							 }
+							 if($row['is_super'] == 1 ){
 
-         }
-				 if($user_phone != $row['phone'] && $super['is_super']==1) {
-				 ?>
-				 <a class="btn btn-danger btn-sm" href="<?php echo base_url('Home/delete_admin/'.$row['id']); ?>">Delete Admin</a>
-				 <?php
-				 }
-				?>
+
+								 ?>
+
+								<a class="btn btn-secondary btn-sm" href="<?php echo base_url('Home/make_super_admin/'.$row['id'].'/'.'0'); ?>">Remove Super</a><br>
+								<?php
+
+							 }
+
+						 }
+
+						 ?>
+						 <a class="btn btn-danger btn-sm disabled" style="margin-top: 5px;" href="<?php echo base_url('Home/delete_admin/'.$row['id']); ?>">Delete User</a><br>
+						 <a class="btn btn-primary btn-sm" style="margin-top: 5px;" href="<?php echo base_url('Home/get_user_profile/'.$row['id']); ?>">Edit User</a><br>
+						 <a class="btn btn-primary btn-sm" style="margin-top: 5px;" href="<?php echo base_url('Home/get_user_deposit_history/'.$row['phone']); ?>">Deposit History</a>
+		        <?php
+
+						?>
+
+					</div>
+			 </div>
+
 
 			</td>
     </tr>

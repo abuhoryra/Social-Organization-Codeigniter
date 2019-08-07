@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Login</title>
+	<title>Edit Deposit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -22,7 +22,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="main">
 <?php $this->load->view($side_bar); ?>
 
-    <h3 style="text-align: center; margin-top: 10%;">Add Deposit</h3>
+    <h3 style="text-align: center; margin-top: 10%;">Edit Deposit</h3>
 <form class="" action="<?php echo base_url('Home/update_deposit/'.$deposit['id']); ?>" method="post">
 
 
@@ -58,10 +58,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       <input name="value" type="number" value="<?php echo $deposit['value']; ?>" class="form-control" placeholder="Tk.">
     </div>
 
-    <div class="form-group">
-        <label for="exampleInputPassword1">Phone</label>
-        <input name="depositor_phone" value="<?php echo $deposit['depositor_phone'];?>" id="phone" type="text" class="form-control" placeholder="Phone" readonly>
-      </div>
+
 
 <input type="hidden" name="recipient_phone" value="<?php echo $admin['phone'];?>">
 <input type="hidden" name="recipient_name" value="<?php echo $admin['first_name'].' '.$admin['last_name'];?>">

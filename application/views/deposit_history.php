@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Login</title>
+	<title>Deposit History</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -35,6 +35,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <th scope="col">Recipent Name</th>
           <th scope="col">Recipent Phone</th>
           <th scope="col">Value</th>
+					<th scope="col">Month</th>
+					<th scope="col">Year</th>
           <th scope="col">Date</th>
           <th scope="col">Time</th>
           <th scope="col">Action</th>
@@ -54,6 +56,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <td><?php echo $row['recipient_name']; ?></td>
           <td><?php echo '0'.$row['recipient_phone']; ?></td>
           <td><?php echo $row['value'].' Tk.'; ?></td>
+					<td><?php echo $row['month']; ?></td>
+					<td><?php echo $row['year']; ?></td>
           <td><?php echo date("jS F, Y", $row['time']); ?></td>
           <td><?php echo date("g:iA", $row['time']); ?></td>
           <td>

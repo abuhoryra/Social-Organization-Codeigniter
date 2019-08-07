@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Profile Edit</title>
+	<title>Edit User</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -24,18 +24,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   <div class="container" style="margin-top: 5%;">
     <div class="row">
       <div class="col-md-7" style="margin: 0 auto;">
-  <form method="post" action="<?php echo base_url('Home/update_my_profile'); ?>">
+  <form method="post" action="<?php echo base_url('Home/update_user_profile/'.$user['id']); ?>">
     <div class="form-group">
       <label>First Name:</label>
-      <input type="text" class="form-control" name="first_name" value="<?php echo $myprofile['first_name']; ?>">
+      <input type="text" class="form-control" name="first_name" value="<?php echo $user['first_name']; ?>">
     </div>
     <div class="form-group">
       <label>Last Name:</label>
-      <input type="text" class="form-control" name="last_name" value="<?php echo $myprofile['last_name']; ?>">
+      <input type="text" class="form-control" name="last_name" value="<?php echo $user['last_name']; ?>">
     </div>
   <div class="form-group">
     <label>Email address</label>
-    <input type="email" class="form-control" name="email" value="<?php echo $myprofile['email']; ?>">
+    <input type="email" class="form-control" name="email" value="<?php echo $user['email']; ?>">
   </div>
   <?php
     echo form_error('email','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
@@ -45,7 +45,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     ?>
   <div class="form-group">
     <label>Phone</label>
-    <input type="number" class="form-control" name="phone" value="<?php echo $myprofile['phone']; ?>">
+    <input type="number" class="form-control" name="phone" value="<?php echo $user['phone']; ?>">
   </div>
   <?php
     echo form_error('phone','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">

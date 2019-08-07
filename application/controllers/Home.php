@@ -76,6 +76,7 @@ class Home extends CI_Controller {
     if($this->session->userdata('phone') && $this->is_super()) {
 
 		$this->data['member'] = $this->GeneralModel->fetch_all_member();
+		$this->data['months'] = $this->GeneralModel->get_all_months();
 		$this->data['admin'] = $this->GeneralModel->session_user_data();
 		$this->data['side_bar'] = 'template/sidebar';
 		$this->load->view('add_money', $this->data);
@@ -94,11 +95,10 @@ class Home extends CI_Controller {
 
 		$post = $this->input->post();
 		$phone = $post['phone'];
-		$value = $post['value'];
 
 		$this->form_validation->set_rules('phone','Name','required');
-    $this->form_validation->set_rules('value','Money','required');
-		$this->form_validation->set_rules('depositor_phone','Phone','required');
+		$this->form_validation->set_rules('month','Month','required');
+
 
 		if ($this->form_validation->run() == FALSE){
 
@@ -109,7 +109,6 @@ class Home extends CI_Controller {
 		}
 		else{
 			$this->GeneralModel->add_deposit();
-			//$this->send_sms($phone,$value);
 			redirect('Home/add_money');
 		}
 
@@ -275,30 +274,7 @@ class Home extends CI_Controller {
 		redirect('Home/get_all_expense');
 	}
 
-	public function send_sms($phone,$value){
-
-		try{
-$soapClient = new SoapClient("https://api2.onnorokomSMS.com/sendSMS.asmx?wsdl");
-$paramArray = array(
-'userName' => "01629710423",
-'userPassword' => "pranto224466",
-'mobileNumber' => "$phone",
-'smsText' => "Your Deposited ammount is $value Tk. Thank You",
-'type' => "TEXT",
-'maskName' => '',
-'campaignName' => '',
-);
-
-$value = $soapClient->__call("OneToOne", array($paramArray));
-print_r($value->OneToOneResult);
-}
-catch (Exception $e) {
-print_r($e->getMessage());
-}
-
-	}
-
-
+	
   public function get_my_profile() {
     if($this->session->userdata('phone')) {
 
@@ -352,6 +328,191 @@ print_r($e->getMessage());
 			 $this->GeneralModel->delete_admin();
 			 redirect('Home');
 	}
+
+	public function get_user_deposit_history($phone) {
+
+		if($this->session->userdata('phone') && $this->is_super()) {
+
+			$this->GeneralModel->phone = $phone;
+			$this->data['deposit'] = $this->GeneralModel->get_user_deposit_history();
+			$this->data['side_bar'] = 'template/sidebar';
+		  $this->load->view('user_deposit_history', $this->data);
+
+		}
+
+		else{
+			$this->data['side_bar'] = 'template/sidebar';
+			$this->load->view('no_permission', $this->data);
+		}
+
+	}
+
+	public function get_user_profile($member_id) {
+    if($this->session->userdata('phone') && $this->is_super()) {
+
+		$this->GeneralModel->member_id = $member_id;
+		$this->data['user'] = $this->GeneralModel->get_user_profile();
+		$this->data['side_bar'] = 'template/sidebar';
+	  $this->load->view('edit_user', $this->data);
+
+	}
+	else{
+		$this->data['side_bar'] = 'template/sidebar';
+		$this->load->view('no_permission', $this->data);
+	}
+
+	}
+
+	public function update_user_profile($member_id) {
+
+		$this->GeneralModel->member_id = $member_id;
+		$post = $this->input->post();
+		$member = $this->GeneralModel->get_user_profile();
+
+		$this->form_validation->set_rules('first_name','First Name','required');
+		$this->form_validation->set_rules('last_name','Lastname','required');
+		$this->form_validation->set_rules('email','Email','required');
+		$this->form_validation->set_rules('phone','Phone','required');
+
+		if($member['email'] != $post['email']){
+			$this->form_validation->set_rules('email','Email','required|is_unique[member.email]');
+		}
+		if($member['phone'] != $post['phone']){
+			$this->form_validation->set_rules('phone','Phone','required|is_unique[member.phone]|max_length[11]');
+		}
+
+		if ($this->form_validation->run() == FALSE){
+
+			$this->GeneralModel->member_id = $member_id;
+			$this->data['user'] = $this->GeneralModel->get_user_profile();
+			$this->data['side_bar'] = 'template/sidebar';
+		  $this->load->view('edit_user', $this->data);
+
+		}
+
+		else{
+
+			$this->GeneralModel->update_user_profile();
+			redirect('Home/get_user_profile/'.$member_id);
+
+		}
+	}
+
+	public function add_month() {
+		if($this->session->userdata('phone') && $this->is_super()) {
+
+			$this->data['months'] = $this->GeneralModel->get_all_months();
+			$this->data['side_bar'] = 'template/sidebar';
+		  $this->load->view('add_month', $this->data);
+
+	}
+	else{
+		$this->data['side_bar'] = 'template/sidebar';
+		$this->load->view('no_permission', $this->data);
+	}
+
+	}
+
+	public function save_month() {
+
+		$post = $this->input->post();
+    $data = $this->GeneralModel->get_all_months();
+
+		$this->form_validation->set_rules('month','Month','required');
+		$this->form_validation->set_rules('year','Year','required');
+		$this->form_validation->set_rules('value','Money','required');
+
+		foreach ($data as $key) {
+			$month = $key['month'];
+			$year = $key['year'];
+			if($month == $post['month'] && $year == $post['year']){
+				$this->form_validation->set_rules('month_year','Month','required',array(
+                'required'      => 'This %s Already Added for this Year  !'
+
+        ));
+			}
+
+		}
+
+
+		if ($this->form_validation->run() == FALSE){
+
+      $this->data['modal'] = 1;
+			$this->data['months'] = $this->GeneralModel->get_all_months();
+			$this->data['side_bar'] = 'template/sidebar';
+		  $this->load->view('add_month', $this->data);
+		}
+		else{
+			$this->GeneralModel->add_month();
+			redirect('Home/add_month');
+		}
+
+
+	}
+
+	public function edit_month($month_id) {
+
+		if($this->session->userdata('phone') && $this->is_super()) {
+
+			$this->GeneralModel->month_id = $month_id;
+			$this->data['months'] = $this->GeneralModel->get_single_month();
+			$this->data['side_bar'] = 'template/sidebar';
+		  $this->load->view('edit_month', $this->data);
+
+	}
+	else{
+		$this->data['side_bar'] = 'template/sidebar';
+		$this->load->view('no_permission', $this->data);
+	}
+
+	}
+
+	public function update_month($month_id) {
+
+		$post = $this->input->post();
+    $data = $this->GeneralModel->get_all_months();
+
+			$this->form_validation->set_rules('month','Month','required');
+			$this->form_validation->set_rules('year','Year','required');
+			$this->form_validation->set_rules('value','Money','required');
+
+			foreach ($data as $key) {
+				$month = $key['month'];
+				$year = $key['year'];
+				if($month == $post['month'] && $year == $post['year']){
+					$this->form_validation->set_rules('month_year','Month','required',array(
+	                'required'      => 'This %s Already Added for this Year  !'
+
+	        ));
+				}
+
+			}
+
+
+		if ($this->form_validation->run() == FALSE){
+
+			$this->GeneralModel->month_id = $month_id;
+			$this->data['months'] = $this->GeneralModel->get_single_month();
+			$this->data['side_bar'] = 'template/sidebar';
+		  $this->load->view('edit_month', $this->data);
+		}
+
+			else{
+			$this->GeneralModel->month_id = $month_id;
+			$this->GeneralModel->update_month();
+			redirect('Home/add_month');
+
+		}
+	}
+
+
+
+	/*public function delete_month($month_id) {
+
+		$this->GeneralModel->month_id = $month_id;
+		$this->GeneralModel->delete_month();
+		redirect('Home/add_month');
+	}*/
 
 
 
