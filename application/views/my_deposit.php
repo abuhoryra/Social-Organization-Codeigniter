@@ -33,6 +33,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <th scope="col">Recipent Name</th>
           <th scope="col">Recipent Phone</th>
           <th scope="col">Value</th>
+					<th scope="col">Month</th>
+					<th scope="col">Year</th>
           <th scope="col">Date</th>
           <th scope="col">Time</th>
 
@@ -51,6 +53,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <td><?php echo $row['recipient_name']; ?></td>
           <td><?php echo '0'.$row['recipient_phone']; ?></td>
           <td><?php echo $row['value'].' Tk.'; ?></td>
+					<td><?php echo $row['month']; ?></td>
+					<td><?php echo $row['year']; ?></td>
           <td><?php echo date("jS F, Y", $row['time']); ?></td>
           <td><?php echo date("g:iA", $row['time']); ?></td>
         </tr>
