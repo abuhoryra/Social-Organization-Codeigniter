@@ -19,6 +19,10 @@ class Account extends CI_Model {
         'email' => $this->input->post('email'),
         'password' => password_hash($this->input->post('password'), PASSWORD_BCRYPT),
         'phone' => $this->input->post('phone'),
+        'id_type' => $this->input->post('id_type'),
+        'id_number' => $this->input->post('id_number'),
+        'nominee_name' => $this->input->post('nominee_name'),
+        'rel_nominee' => $this->input->post('rel_nominee'),
         'is_super' => $is_super
      );
 

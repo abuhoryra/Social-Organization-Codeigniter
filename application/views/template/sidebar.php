@@ -60,13 +60,27 @@ body {
   <a href="#" id="side">User</a>
   <div class="list" style="display: none;">
       <a id="sideList" href="<?php echo site_url('Home');?>">User List</a>
-      <a id="sideList" href="<?php echo site_url('Home/add_money');?>">Add Deposit</a>
-      <a id="sideList" href="<?php echo site_url('Home/add_expense');?>">Add Expense</a>
-      <a id="sideList" href="<?php echo site_url('Home/add_month');?>">Add Month</a>
+      <?php
+      if(is_super()){
+     ?>
+     <a id="sideList" href="<?php echo site_url('Home/add_money');?>">Add Deposit</a>
+     <a id="sideList" href="<?php echo site_url('Home/add_expense');?>">Add Expense</a>
+     <a id="sideList" href="<?php echo site_url('Home/add_month');?>">Add Month</a>
+     <?php
+      }
+   ?>
+
   </div>
   <a href="#" id="side_2">Deposit History</a>
   <div class="list_2" style="display: none;">
+    <?php
+       if(is_super()){
+      ?>
       <a id="sideList_2" href="<?php echo site_url('Home/deposit_history');?>">All Deposit</a>
+      <?php
+       }
+    ?>
+
       <a id="sideList_2" href="<?php echo site_url('Home/my_deposit');?>">My Deposit</a>
   </div>
   <a href="<?php echo site_url('Home/get_all_expense');?>">Expense History</a>

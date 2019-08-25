@@ -49,7 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <form method="post" id="form" action="<?php echo base_url('Home/add_admin'); ?>">
           <div class="form-group">
             <h6>First Name:</h6>
-            <input type="text" name="first_name" class="form-control" placeholder="First Name">
+            <input type="text" name="first_name" class="form-control" placeholder="First Name" value="<?php echo set_value('first_name'); ?>">
           </div>
           <?php
             echo form_error('first_name','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
@@ -59,7 +59,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             ?>
           <div class="form-group">
             <h6>Last Name:</h6>
-            <input type="text" name="last_name" class="form-control" placeholder="Last Name">
+            <input type="text" name="last_name" class="form-control" placeholder="Last Name" value="<?php echo set_value('last_name'); ?>">
           </div>
           <?php
             echo form_error('last_name','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
@@ -69,7 +69,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             ?>
         <div class="form-group">
            <h6>Email address:</h6>
-           <input type="email" name="email" class="form-control" placeholder="Email">
+           <input type="email" name="email" class="form-control" placeholder="Email" value="<?php echo set_value('email'); ?>">
         </div>
         <?php
           echo form_error('email','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
@@ -89,7 +89,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         ?>
       <div class="form-group">
          <h6>Phone Number:</h6>
-         <input type="number" name="phone" class="form-control" placeholder="Phone">
+         <input type="number" name="phone" class="form-control" placeholder="Phone" value="<?php echo set_value('phone'); ?>">
       </div>
       <?php
         echo form_error('phone','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
@@ -97,6 +97,58 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </button>',
                         '</div>');
                         ?>
+	<div class="form-group">
+  <label>Select NID/Passport/Birth Certificate:</label>
+  <select class="form-control" name="id_type">
+    <option value="NID">NID</option>
+    <option value="Passport">Passport</option>
+    <option value="Birth Certificate">Birth Certificate</option>
+  </select>
+</div>
+<?php
+	echo form_error('id_type','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+									</button>',
+									'</div>');
+									?>
+<div class="form-group">
+	 <h6>ID Number:</h6>
+	 <input type="text" name="id_number" class="form-control" placeholder="ID Number" value="<?php echo set_value('id_number'); ?>">
+</div>
+<?php
+	echo form_error('id_number','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+									</button>',
+									'</div>');
+									?>
+<div class="form-group">
+	 <h6>Nominee Name:</h6>
+	 <input type="text" name="nominee_name" class="form-control" placeholder="Nominee Name" value="<?php echo set_value('nominee_name'); ?>">
+</div>
+<?php
+	echo form_error('nominee_name','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+									</button>',
+									'</div>');
+									?>
+<div class="form-group">
+<label>Relationship With Nominee:</label>
+<select class="form-control" name="rel_nominee">
+	<option value="Father">Father</option>
+	<option value="Mother">Mother</option>
+	<option value="Brother">Brother</option>
+	<option value="Sister">Sister</option>
+	<option value="Husband">Husband</option>
+	<option value="Wife">Wife</option>
+	<option value="Others">Others</option>
+</select>
+</div>
+<?php
+	echo form_error('rel_nominee','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+									</button>',
+									'</div>');
+									?>
       <div class="checkbox">
          <h6><input type="checkbox" name="is_super" value="0"> Super Admin</h6>
       </div>
@@ -116,6 +168,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   <thead>
     <tr>
       <th scope="col">#</th>
+			<th scope="col">Image</th>
       <th scope="col">First Name</th>
       <th scope="col">Last Name</th>
       <th scope="col">Email</th>
@@ -149,6 +202,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     ?>
     <tr>
       <th scope="row"><?php echo $count; ?></th>
+			<td><img style="border-radius: 100%;" src="<?php echo base_url();?>upload/<?php echo $row['photo'];?>" onerror="this.onerror=null;this.src='<?php echo base_url();?>upload/default.png';" id="image" height="50" width="50"></td>
       <td><?php echo $row['first_name']; ?></td>
       <td><?php echo $row['last_name']; ?></td>
       <td><?php echo $row['email']; ?></td>
@@ -209,7 +263,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						 ?>
 						 <a class="btn btn-danger btn-sm disabled" style="margin-top: 5px;" href="<?php echo base_url('Home/delete_admin/'.$row['id']); ?>">Delete User</a><br>
 						 <a class="btn btn-primary btn-sm" style="margin-top: 5px;" href="<?php echo base_url('Home/get_user_profile/'.$row['id']); ?>">Edit User</a><br>
-						 <a class="btn btn-primary btn-sm" style="margin-top: 5px;" href="<?php echo base_url('Home/get_user_deposit_history/'.$row['phone']); ?>">Deposit History</a>
+						 <a class="btn btn-primary btn-sm" style="margin-top: 5px;" href="<?php echo base_url('Home/get_user_deposit_history/'.$row['id']); ?>">Deposit History</a>
+						  <a class="btn btn-primary btn-sm" style="margin-top: 5px;" href="<?php echo base_url('Home/reset_password_bySuperAdmin/'.$row['id']); ?>">Reset Password</a>
 		        <?php
 
 						?>

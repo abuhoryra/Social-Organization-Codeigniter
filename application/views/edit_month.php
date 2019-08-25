@@ -33,20 +33,34 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			 									</button>',
 			 									'</div>');
 			 									?>
-       <div class="form-group">
-         <label>Month</label>
-           <input type="text" class="form-control"  value="<?php echo $months['month']; ?>" name="month">
-        </div>
+												<div class="form-group">
+								 				 <label>Select Month</label>
+								 				 <select class="form-control" name="month">
+								 					 <option value="<?php echo $months['month']; ?>"><?php echo $months['month']; ?></option>
+								 					 <option value="January">January</option>
+								 					 <option value="February">February</option>
+								 					 <option value="March">March</option>
+								 					 <option value="April">April</option>
+								 					 <option value="May">May</option>
+								 					 <option value="June">June</option>
+								 					 <option value="July">July</option>
+								 					 <option value="August">August</option>
+								 					 <option value="September">September</option>
+								 					 <option value="October">October</option>
+								 					 <option value="November">November</option>
+								 					 <option value="December">December</option>
+								 				 </select>
+								 				</div>
 				<?php
 					echo form_error('month','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
 													<span aria-hidden="true">&times;</span>
 													</button>',
 													'</div>');
 													?>
-        <div class="form-group">
-          <label>Year</label>
-        <input class="form-control" type="text" value="<?php echo $months['year']; ?>" name="year">
-        </div>
+													<div class="form-group">
+							 						 <label>Select Year</label>
+							 					 <input class="form-control" type="text" id="datepicker" name="year" value="<?php echo $months['year']; ?>" placeholder="Select Year" />
+							 					 </div>
 				<?php
 	        echo form_error('year','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
 	                        <span aria-hidden="true">&times;</span>
@@ -77,5 +91,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
               });
             });
             </script>
+						<script type="text/javascript">
+						var map = {};
+$('select option').each(function () {
+	if (map[this.value]) {
+			$(this).remove()
+	}
+	map[this.value] = true;
+});
+						</script>
+						<script type="text/javascript">
+						$("#datepicker").datepicker({
+						    format: "yyyy",
+						    viewMode: "years",
+						    minViewMode: "years"
+						});
+						</script>
 </body>
 </html>

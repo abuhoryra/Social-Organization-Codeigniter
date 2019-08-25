@@ -7,10 +7,11 @@ class GeneralModel extends CI_Model {
   public $expense_id;
   public $phone;
   public $month_id;
+  public $id;
 
    public function get_admin_list() {
 
-     return $this->db->select('id,first_name,last_name,email,phone,is_super')
+     return $this->db->select('id,first_name,last_name,email,phone,is_super,photo')
                      ->from('member')
                      ->get()->result_array();
    }
@@ -52,12 +53,13 @@ class GeneralModel extends CI_Model {
         $id = $this->input->post('id');
 
 
-        $new_data = $this->db->select('first_name,last_name')
+        $new_data = $this->db->select('id,first_name,last_name')
                              ->from('member')
                              ->where('phone',$phone)
                              ->get()->row_array();
 
         $depositor_name = $new_data['first_name'].' '.$new_data['last_name'];
+        $depositor_id = $new_data['id'];
 
         $month_data = $this->db->select('*')
                                ->from('month')
@@ -81,6 +83,7 @@ class GeneralModel extends CI_Model {
 
 
         $data = array(
+          'depositor_id' => $depositor_id,
           'depositor_name' => $depositor_name,
           'depositor_phone'  => $this->input->post('depositor_phone'),
           'recipient_name'  => $this->input->post('recipient_name'),
@@ -92,7 +95,9 @@ class GeneralModel extends CI_Model {
         );
 
         if($rowcount > 0){
+
           $this->session->set_flashdata('message', 'You Are Already Add Deposit for This Month.');
+          redirect('Home/add_money');
         }
         else{
           $this->db->insert('account', $data);
@@ -131,7 +136,7 @@ class GeneralModel extends CI_Model {
 
      return $this->db->select('*')
                      ->from('account')
-                     ->order_by('time', 'DESC')
+                     ->order_by('id', 'DESC')
                      ->limit($limit,$start)
                      ->get()->result_array();
    }
@@ -154,22 +159,72 @@ class GeneralModel extends CI_Model {
    public function update_deposit() {
 
         $phone = $this->input->post('phone');
+        $id = $this->input->post('id');
 
-        $new_data = $this->db->select('first_name,last_name')
+
+        $new_data = $this->db->select('id,first_name,last_name')
                              ->from('member')
                              ->where('phone',$phone)
                              ->get()->row_array();
 
         $depositor_name = $new_data['first_name'].' '.$new_data['last_name'];
+        $depositor_id = $new_data['id'];
 
-        $data = array(
-          'depositor_name' => $depositor_name,
-          'value'  => $this->input->post('value'),
-          'time'  => time()
-        );
-        $this->db->set($data);
-        $this->db->where('id', $this->deposit_id);
-        $this->db->update('account');
+        $month_year = $this->input->post('month');
+
+        $split = explode(" ",$month_year);
+        $month = $split[0];
+        $year = $split[1];
+
+        $get_value = $this->db->select('value')
+                              ->from('month')
+                              ->where('month', $month)
+                              ->where('year', $year)
+                              ->get()->row_array();
+
+       $value = $get_value['value'];
+
+        $month_data = $this->db->select('value')
+                                ->from('month')
+                                ->where('month', $month)
+                                ->where('year', $year)
+                                ->get()->row_array();
+
+        $value = $month_data['value'];
+
+
+
+        $check =$this->db->select('*')
+                         ->from('account')
+                        ->where('depositor_name',$depositor_name)
+                        ->where('month',$month)
+                        ->where('year', $year)
+                        ->get()->num_rows();
+
+
+                $rowcount= $check;
+
+          $data = array(
+            'depositor_name' => $depositor_name,
+            'depositor_phone' => $phone,
+            'value'  => $value,
+            'month' => $month,
+            'year' => $year,
+            'time'  => time()
+          );
+
+        if($rowcount > 0){
+          $url = $this->uri->segment(3);
+          $this->session->set_flashdata('message', 'You Are Already Add Deposit for This Month.');
+          redirect('Home/edit_deposit/'.$url);
+        }
+        else{
+          $this->db->set($data);
+          $this->db->where('id', $this->id);
+          $this->db->update('account');
+        }
+
+
 
 
    }
@@ -249,7 +304,7 @@ class GeneralModel extends CI_Model {
 
    public function get_my_profile() {
 
-     return $this->db->select('id,first_name,last_name,email,phone')
+     return $this->db->select('*')
                      ->from('member')
                      ->where('id', $this->session->userdata['id'])
                      ->get()->row_array();
@@ -261,7 +316,11 @@ class GeneralModel extends CI_Model {
         'first_name' => $this->input->post('first_name'),
         'last_name' => $this->input->post('last_name'),
         'email' => $this->input->post('email'),
-        'phone' => $this->input->post('phone')
+        'phone' => $this->input->post('phone'),
+        'id_type' => $this->input->post('id_type'),
+        'id_number' => $this->input->post('id_number'),
+        'nominee_name' => $this->input->post('nominee_name'),
+        'rel_nominee' => $this->input->post('rel_nominee')
      );
 
      $this->db->set($data);
@@ -286,9 +345,11 @@ class GeneralModel extends CI_Model {
    public function get_user_deposit_history() {
      return $this->db->select('*')
                      ->from('account')
-                     ->where('depositor_phone', $this->phone)
+                     ->where('depositor_id', $this->deposit_id)
                      ->get()->result_array();
    }
+
+
 
    public function get_user_profile() {
 
@@ -366,6 +427,49 @@ class GeneralModel extends CI_Model {
      return $this->db->select('year')
                      ->from('month')
                      ->get()->result_array();
+   }
+
+   public function member_password_change() {
+
+     $password = password_hash($this->input->post('password'), PASSWORD_BCRYPT);
+
+     $this->db->set('password', $password);
+     $this->db->where('id', $this->session->userdata['id']);
+     $this->db->update('member');
+   }
+
+   public function reset_password_bySuperAdmin() {
+
+     $phone = $this->db->select('phone')
+              ->from('member')
+              ->where('id', $this->member_id)
+              ->get()->row_array();
+
+      $reset_password = $phone['phone'];
+      $password = password_hash($reset_password, PASSWORD_BCRYPT);
+
+      $this->db->set('password', $password);
+      $this->db->where('id', $this->member_id);
+      $this->db->update('member');
+
+   }
+
+   public function save_profile_image() {
+
+     $image = $this->upload->file_name;
+
+     $this->db->set('photo', $image);
+     $this->db->where('id', $this->session->userdata['id']);
+     $this->db->update('member');
+
+   }
+
+   public function get_only_image() {
+
+     return $this->db->select('photo')
+                     ->from('member')
+                     ->where('id', $this->session->userdata['id'])
+                     ->get()->row_array();
    }
 
 }

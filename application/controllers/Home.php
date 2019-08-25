@@ -31,7 +31,11 @@ class Home extends CI_Controller {
     $this->form_validation->set_rules('last_name','Lastname','required');
 		$this->form_validation->set_rules('email','Email','required|is_unique[member.email]');
     $this->form_validation->set_rules('password','Password','required|min_length[6]');
-    $this->form_validation->set_rules('phone','Phone','required|is_unique[member.phone]|max_length[11]');
+    $this->form_validation->set_rules('phone','Phone','required|is_unique[member.phone]|min_length[11]|max_length[11]');
+		$this->form_validation->set_rules('id_type','NID/Passport/Birth Certificate','required');
+		$this->form_validation->set_rules('id_number','ID Number','required|is_unique[member.id_number]');
+		$this->form_validation->set_rules('nominee_name','Nominee Name','required');
+		$this->form_validation->set_rules('rel_nominee','Relationship With Nominee','required');
 		if ($this->form_validation->run() == FALSE){
 
 			$this->data['admin'] = $this->GeneralModel->get_admin_list();
@@ -108,9 +112,10 @@ class Home extends CI_Controller {
 			$this->load->view('add_money', $this->data);
 		}
 		else{
+
 			$this->GeneralModel->add_deposit();
-			redirect('Home/add_money');
-		}
+     	redirect('Home/deposit_history');
+    }
 
 
 	}
@@ -159,6 +164,7 @@ class Home extends CI_Controller {
 
 			$this->GeneralModel->deposit_id = $deposit_id;
 			$this->data['deposit'] = $this->GeneralModel->get_update_deposit();
+			$this->data['months'] = $this->GeneralModel->get_all_months();
 			$this->data['member'] = $this->GeneralModel->fetch_all_member();
 			$this->data['admin'] = $this->GeneralModel->session_user_data();
 			$this->data['side_bar'] = 'template/sidebar';
@@ -171,9 +177,8 @@ class Home extends CI_Controller {
 
 	}
 
-	public function update_deposit($deposit_id) {
-
-		$this->GeneralModel->deposit_id = $deposit_id;
+	public function update_deposit($id) {
+		$this->GeneralModel->id = $id;
 		$this->GeneralModel->update_deposit();
 		redirect('Home/deposit_history');
 	}
@@ -224,7 +229,7 @@ class Home extends CI_Controller {
 		}
 		else{
 			$this->GeneralModel->save_expense();
-			redirect('Home/add_expense');
+			redirect('Home/get_all_expense');
 		}
 
 	}
@@ -274,7 +279,7 @@ class Home extends CI_Controller {
 		redirect('Home/get_all_expense');
 	}
 
-	
+
   public function get_my_profile() {
     if($this->session->userdata('phone')) {
 
@@ -298,12 +303,19 @@ class Home extends CI_Controller {
     $this->form_validation->set_rules('last_name','Lastname','required');
 		$this->form_validation->set_rules('email','Email','required');
     $this->form_validation->set_rules('phone','Phone','required');
+		$this->form_validation->set_rules('id_type','NID/Passport/Birth Certificate','required');
+		$this->form_validation->set_rules('id_number','ID Number','required');
+		$this->form_validation->set_rules('nominee_name','Nominee Name','required');
+		$this->form_validation->set_rules('rel_nominee','Relationship With Nominee','required');
 
 		if($member['email'] != $post['email']){
 			$this->form_validation->set_rules('email','Email','required|is_unique[member.email]');
 		}
 		if($member['phone'] != $post['phone']){
 			$this->form_validation->set_rules('phone','Phone','required|is_unique[member.phone]|max_length[11]');
+		}
+		if($member['id_number'] != $post['id_number']){
+			$this->form_validation->set_rules('id_number','ID Number','required|is_unique[member.id_number]');
 		}
 
 		if ($this->form_validation->run() == FALSE){
@@ -329,11 +341,11 @@ class Home extends CI_Controller {
 			 redirect('Home');
 	}
 
-	public function get_user_deposit_history($phone) {
+	public function get_user_deposit_history($deposit_id) {
 
 		if($this->session->userdata('phone') && $this->is_super()) {
 
-			$this->GeneralModel->phone = $phone;
+			$this->GeneralModel->deposit_id = $deposit_id;
 			$this->data['deposit'] = $this->GeneralModel->get_user_deposit_history();
 			$this->data['side_bar'] = 'template/sidebar';
 		  $this->load->view('user_deposit_history', $this->data);
@@ -514,6 +526,69 @@ class Home extends CI_Controller {
 		redirect('Home/add_month');
 	}*/
 
+  public function member_password_change() {
+
+		$this->form_validation->set_rules('password','Password','required|min_length[6]');
+		$this->form_validation->set_rules('conf_password','Password','required|matches[password]');
+
+		if ($this->form_validation->run() == FALSE){
+
+			$this->data['show_modal'] = 1;
+			$this->data['myprofile'] = $this->GeneralModel->get_my_profile();
+			$this->data['side_bar'] = 'template/sidebar';
+			$this->load->view('my_profile_edit', $this->data);
+
+		}
+
+		else{
+
+			$this->GeneralModel->member_password_change();
+			$this->session->set_flashdata('passchange', 'Password Changed Successfully :)');
+			redirect('Home/get_my_profile');
+		}
+
+	}
+
+	public function reset_password_bySuperAdmin($member_id) {
+
+		$this->GeneralModel->member_id = $member_id;
+		$phone = $this->GeneralModel->reset_password_bySuperAdmin();
+		redirect('Home');
+	}
+
+	public function profile_image_upload() {
+
+		           $config['upload_path']          = './upload/';
+							 $config['allowed_types']        = 'gif|jpg|png';
+							 $config['encrypt_name'] = TRUE;
+							 $this->load->library('upload', $config);
+
+							 if ( ! $this->upload->do_upload('image'))
+							 {
+											$this->data['error'] = array('error' => $this->upload->display_errors());
+											$this->data['myprofile'] = $this->GeneralModel->get_my_profile();
+								 			$this->data['side_bar'] = 'template/sidebar';
+								 			$this->load->view('my_profile_edit', $this->data);
+							 }
+							 else
+							 {
+							 $image = $this->GeneralModel->get_only_image();
+						 	 unlink('./upload/'.$image['photo']);
+							 $data = $this->upload->data();
+							 $config['image_library'] = 'gd2';
+							 $config['source_image'] = './upload/'.$data["file_name"];
+							 $config['create_thumb'] = FALSE;
+							 $config['maintain_ratio'] = FALSE;
+							 $config['quality'] = '60%';
+							 $config['width'] = 400;
+							 $config['height'] = 400;
+							 $config['new_image'] = './upload/'.$data["file_name"];
+							 $this->load->library('image_lib', $config);
+							 $this->image_lib->resize();
+               $this->GeneralModel->save_profile_image();
+							 redirect('Home/get_my_profile');
+							 }
+	}
 
 
 }

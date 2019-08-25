@@ -29,7 +29,7 @@ class Login extends CI_Controller {
         }
         else{
             $this->session->set_flashdata('failed', 'Invalid Phone Or Password');
-            redirect('Login/index');
+            $this->load->view('login_form');
         }
     }
 	}

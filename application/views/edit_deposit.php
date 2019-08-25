@@ -24,25 +24,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     <h3 style="text-align: center; margin-top: 10%;">Edit Deposit</h3>
 <form class="" action="<?php echo base_url('Home/update_deposit/'.$deposit['id']); ?>" method="post">
+	<?php
 
+	if($this->session->flashdata('message')){
+		?>
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		  <strong>Sorry!</strong> <?php echo $this->session->flashdata('message');?>
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<?php
+	}
 
+	?>
     <div class="form-group">
     <label for="exampleFormControlSelect1">Edit Depositor Name</label>
 
-    <select id="name" class="form-control" id="exampleFormControlSelect1" class="select" name="phone">
-     <option value="<?php  echo $deposit['depositor_phone'];?>"><?php  echo $deposit['depositor_name'];?></option>
+    <select class="form-control something"  name="phone">
+    <option value="<?php  echo $deposit['depositor_phone'];?>"><?php  echo $deposit['depositor_name'];?></option>
       <?php
 
        foreach ($member as $row) {
-
           ?>
-          <option  value="<?php echo $row['phone'];?>">
-            <?php
-  echo $row['first_name'].' '.$row['last_name'];
 
-            ?>
-          </option>
-
+					<option value="<?php echo $row['phone'];?>"><?php  echo $row['first_name'].' '.$row['last_name'];?></option>
           <?php
 
         }
@@ -53,17 +59,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   </div>
 
 
-  <div class="form-group">
-      <label for="exampleInputPassword1">Edit Money</label>
-      <input name="value" type="number" value="<?php echo $deposit['value']; ?>" class="form-control" placeholder="Tk.">
-    </div>
+	<div class="form-group">
+	<label for="exampleFormControlSelect1">Edit Month</label>
 
+	<select id="month" class="form-control"  name="month">
+		<option value="<?php echo $deposit['month'].' '.$deposit['year']; ?>"><?php echo $deposit['month'].' '.$deposit['year']; ?></option>
+		<?php
 
+			foreach ($months as $row) {
+
+				?>
+				<option value="<?php echo $row['month'].' '.$row['year']; ?>"><?php echo $row['month'].' '.$row['year']; ?></option>
+
+				<?php
+
+			}
+
+		?>
+</select>
+</div>
+
+<input id="money" name="id" type="hidden" class="form-control" value="<?php echo $deposit['depositor_id']; ?>">
 
 <input type="hidden" name="recipient_phone" value="<?php echo $admin['phone'];?>">
 <input type="hidden" name="recipient_name" value="<?php echo $admin['first_name'].' '.$admin['last_name'];?>">
 <div style="text-align: center;">
-  <button type="submit" class="btn btn-success">Save</button>
+  <button type="submit" class="btn btn-success">Update</button>
 </div>
 
       </form>
@@ -71,22 +92,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </div>
 <script type="text/javascript">
 var optionValues =[];
-$('#name option').each(function(){
- if($.inArray(this.value, optionValues) >-1){
-    $(this).remove()
- }else{
-    optionValues.push(this.value);
- }
+$('.something option').each(function(){
+   if($.inArray(this.value, optionValues) >-1){
+      $(this).remove()
+   }else{
+      optionValues.push(this.value);
+   }
 });
 </script>
-<script type="text/javascript">
-$('#name').on('change', function() {
-   var number = this.value;
-  $("#phone").val(function() {
-    return number;
-});
-});
-</script>
+
 <script type="text/javascript">
    $(document).ready(function(){
    $("button").click(function(){
@@ -94,6 +108,7 @@ $('#name').on('change', function() {
   });
 });
 </script>
+
 
 
 </body>

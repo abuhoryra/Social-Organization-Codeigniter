@@ -54,7 +54,7 @@ box-shadow: none;
 	                           ?>
 	                      </h4>
 	                      <div class="form-group">
-	                         <input type="text" class="form-control" placeholder="Phone" name="phone">
+	                         <input type="text" class="form-control" placeholder="Phone" name="phone" value="<?php echo set_value('phone'); ?>">
 	                      </div>
 	                      <?php
 	                        echo form_error('phone','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
@@ -63,7 +63,7 @@ box-shadow: none;
 	                                        '</div>');
 	                                        ?>
 	                        <div class="form-group" >
-	                            <input type="password" class="form-control" id="exampleInputPassword4" placeholder="Password" name="password">
+	                            <input type="password" class="form-control" id="exampleInputPassword4" placeholder="Password" name="password" value="<?php echo set_value('password'); ?>">
 	                        </div>
                           <?php
 	                          echo form_error('password','<div id="al" class="alert alert-danger">     <button type="button" class="close" aria-label="Close">
